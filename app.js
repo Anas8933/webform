@@ -27,21 +27,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/some-route', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
-// Connect to MongoDB using environment variable
 
-const mongoURI = process.env.URI;
-
-if (!mongoURI) {
-  console.error('MongoDB URI is not set. Check your .env file.');
-  process.exit(1); // Exit process with failure
-}
-
-mongoose.connect(mongoURI, {
+// Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true
+  useUnifiedTopology: true,
 })
-  .then(() => console.log('MongoDB Connected'))
-  .catch(err => console.error('MongoDB connection error:', err));
+.then(() => console.log('MongoDB connected'))
+.catch(err => console.error('MongoDB connection error:', err));
+
 
 // Use the lead routes
 const webformRoutes = require("./src/routes/webformRoutes");
