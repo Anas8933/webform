@@ -1,11 +1,14 @@
 // server.js
+const dotenv = require("dotenv");
+dotenv.config();
 const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const path = require('path');
 const cors = require("cors");
-require('dotenv').config();
 
+
+dotenv.config();
 // Initialize Express
 const app = express();
 app.use(bodyParser.json());
@@ -24,15 +27,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.get('/some-route', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
-
-
-
 // Connect to MongoDB using environment variable
-mongoose.connect("mongodb://localhost:27017/crm", {
+
+const mongoURI = process.env.URI;
+
+if (!mongoURI) {
+  console.error('MongoDB URI is not set. Check your .env file.');
+  process.exit(1); // Exit process with failure
+}
+
+mongoose.connect(mongoURI, {
   useNewUrlParser: true,
-  useUnifiedTopology: true,
+  useUnifiedTopology: true
 })
-  .then(() => console.log('MongoDB connected'))
+  .then(() => console.log('MongoDB Connected'))
   .catch(err => console.error('MongoDB connection error:', err));
 
 // Use the lead routes
